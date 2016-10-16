@@ -21,7 +21,7 @@ class Home extends React.Component {
   render() {
     return (
       <Card className="container">
-        <CardTitle title="React Application" subtitle="This is the home page." />
+        <CardTitle title="Polling App" subtitle="by Xiaochen Du" />
           <Link to="/polls/new">
             <RaisedButton label="Create" primary={true} style={style} />
           </Link>

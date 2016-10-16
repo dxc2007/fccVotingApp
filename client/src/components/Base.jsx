@@ -1,44 +1,54 @@
 import React from 'react';
 import {Link, IndexLink} from 'react-router';
+import AppBar from 'material-ui/AppBar';
+import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Auth from '../modules/Auth';
 
-
 class Base extends React.Component {
-
   /**
    * Render the component.
    */
+   getChildContext() {
+     return { muiTheme: getMuiTheme(baseTheme) };
+ }
+
+
   render() {
     return (
       <div>
-        <div className="top-bar">
-          <div className="top-bar-left">
-            <IndexLink to="/">React App</IndexLink>
-              <Link to="/polls/randomName">Polls</Link>
-              <Link to="/polls/new">NewPoll</Link>
-              <Link to="/polls/mypolls">UserPolls</Link>
-          </div>
+        <div>
+          <AppBar title="Polling App" iconClassNameRight="muidocs-icon-navigation-expand-more">
 
-          {Auth.isUserAuthenticated() ? (
-            <div className="top-bar-right">
-              <Link to="/logout">Log out</Link>
-            </div>
-          ) : (
-            <div className="top-bar-right">
-              <Link to="/login">Log in</Link>
-              <Link to="/signup">Sign up</Link>
-            </div>
-          )}
+            
+                    <IndexLink to="/">React App</IndexLink>
+                     <Link to="/polls/randomName">Polls</Link>
+                     <Link to="/polls/new">NewPoll</Link>
+                     <Link to="/polls/mypolls">UserPolls</Link>
 
+
+                   {Auth.isUserAuthenticated() ? (
+
+                       <div><Link to="/logout">Log out</Link></div>
+
+                   ) : (
+                     <div><Link to="/login">Log in</Link>
+                     <Link to="/signup">Sign up</Link></div>
+
+
+                   )}
+
+               </AppBar>
         </div>
 
-        { /* child component will be rendered here */ }
         {this.props.children}
-
       </div>
     );
   }
-
 }
+
+Base.childContextTypes = {
+  muiTheme: React.PropTypes.object.isRequired,
+};
 
 export default Base;

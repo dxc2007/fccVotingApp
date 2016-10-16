@@ -1,7 +1,7 @@
 import React from 'react';
-import {Card, CardTitle, CardText, RaisedButton, TextField} from 'material-ui';
-import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {RaisedButton, TextField, CardText} from 'material-ui';
+import $ from "jquery";
+
 import Auth from '../modules/Auth';
 
 let pollTemplate = {
@@ -17,32 +17,32 @@ constructor(props) {
 
   this.state = {
     inputs: ['input-0', "input-1"],
-    formOptions: []
+    formOptions: [],
+    showOptions: true,
+    feedback: ""
   }
-}
-
-getChildContext() {
-  return { muiTheme: getMuiTheme(baseTheme) };
 }
 
 render() {
   console.log("User Info: %s", Auth.getUserInfo());
     return(
-      <Card className="container">
-        <form action="/" onSubmit={this.processForm.bind(this)}>
-          <h2 className="card-heading">Create New Poll</h2>
-          <TextField ref="title" floatingLabelText="Title" />
-            { this.state.inputs.map(input =>
-              <p>
-                <TextField ref={input} key={input} floatingLabelText="Option" />
-              </p>
-            )}
-            <div className="button-line">
-              <RaisedButton onClick={this.appendInput.bind(this)} label="Add Option" />
-              <RaisedButton type="submit" label="Submit" primary={true} />
-            </div>
-        </form>
-      </Card>
+      <div>
+        { this.state.showOptions ?
+          (<form action="/" onSubmit={this.processForm.bind(this)}>
+            <h2 className="card-heading">Create New Poll</h2>
+            <TextField ref="title" floatingLabelText="Title" />
+              { this.state.inputs.map(input =>
+                <p>
+                  <TextField ref={input} key={input} floatingLabelText="Option" />
+                </p>
+              )}
+              <div className="button-line">
+                <RaisedButton onClick={this.appendInput.bind(this)} label="Add Option" />
+                <RaisedButton type="submit" label="Submit" primary={true} />
+              </div>
+          </form>) : <CardText>{this.state.feedback}</CardText>
+        }
+      </div>
     )}
 
 processForm(event) {
@@ -54,42 +54,56 @@ processForm(event) {
   // }
   // let optionArr = [];
   for (var ref in this.refs) {
-    // console.log("Ref: %s", this.refs[ref]);
-    // optionArr.push(this.refs[ref].getValue());
-    let copyFormOptions = this.state.formOptions;
-    this.setState({formOptions: copyFormOptions.push(this.refs[ref].getValue())})
-    // console.log(optionArr.slice(1));
+    console.log(this.refs);
+    console.log("Ref: %s", this.refs[ref]);
+    let formValues = this.refs[ref].getValue();
+    let currentValues = this.state.formOptions;
+    console.log(currentValues);
+    console.log(this.state.formOptions);
+    this.setState({currentValues: this.state.formOptions.push(formValues)});
     console.log(this.state.formOptions.slice(1));
   };
   pollTemplate.title = this.refs.title.getValue();
   // this.state.inputs.map(field => this.state.formOptions.append(this.refs.field.getValue()));
   //yes it works!!!
   pollTemplate.options = this.state.formOptions.slice(1);
+  for (var option in pollTemplate.options) {
+    console.log("Form Temp options: ", pollTemplate.options[option]);
+  }
   // const newPoll = new Poll(pollTemplate);
   // create a string for an HTTP body message
   console.log("title: %s", pollTemplate.title);
   console.log("creator: %s", pollTemplate.creator);
-  console.log("poll: " + this.state.inputs);
-  console.log("options: " + pollTemplate.options);
+  // console.log("poll: " + this.state.inputs);
+  console.log("options: %s",  pollTemplate.options);
   let poll = 'title=' + pollTemplate.title
            + '&creator=' + pollTemplate.creator
            + '&options=' + pollTemplate.options;
+
   // create an AJAX request
-  console.log("Submmiting the following new poll: %j", poll);
+    // let poll = pollTemplate;
+  console.log("Submmiting the following new poll: %j", pollTemplate);
+  // $.ajax({
+  //   type: "POST",
+  //   url: "/polls/newpoll",
+  //   data: pollTemplate,
+  // }).done(function(data) {
+  //   console.log(data);
+  //   //light up sucess. hide button etc.
+  // }).fail(function(error) {
+  //   console.log(error);
+  // });
   let xhr = new XMLHttpRequest();
   xhr.open('post', '/polls/newpoll');
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xhr.responseType = 'json';
   xhr.send(poll);
+  this.setState({ feedback : "Oh yeah it's done!" });
+  this.setState({ showOptions : false });
   }
 
   appendInput() {
     let newInput = 'input-'+ this.state.inputs.length;
     this.setState({ inputs: this.state.inputs.concat([newInput]) });
-    this.setState({ formOptions: this.state.inputs });
   }
 }
-
-NewPoll.childContextTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
-};

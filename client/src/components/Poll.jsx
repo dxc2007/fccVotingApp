@@ -1,9 +1,6 @@
 import React from 'react';
-// const Poll = require('mongoose').model('Poll');
-//
-// const poll = Poll.findOne({
-//   name: this.props.location
-// })
+import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import {RaisedButton, CardText} from 'material-ui';
 
 const poll = {
   title: "What's your favourite song?",
@@ -26,61 +23,73 @@ export default class Poll extends React.Component {
     super(props)
 
     this.state = {
-      poll
+      poll,
+      showResults: true,
+      option: ""
     }
   }
 
   componentDidMount() {
-      console.log(this.state.poll);
+    // console.log(this.state.poll);
     let xhr = new XMLHttpRequest();
-    let pollName = this.props.routeParams.formName;
-    console.log(pollName);
-    xhr.open('get', 'polls/'+pollName,);
+    // console.log(this.props);
+    let pollName = this.props.params.formname;
+    let self = this;
+    // console.log(pollName);
+    xhr.open('get', '/polls/details/'+pollName,);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     // set the authorization HTTP header
     xhr.responseType = 'json';
     xhr.onload = function() {
-      let state = {};
-
       if (this.status == 200) {
-        // success
-
-        state.errorMessage = '';
-        state.errors = {};
-        state.poll = this.response.poll
-
         // change the component state
-        this.setState(state);
-
+        // console.log(this.response.data);
+        self.setState({poll: this.response.data});
+        // console.log(self.state.poll);
         // change the current URL to /
         // history.replaceState(null, '/login');
       } else {
         // failure
-
-        state.errorMessage = this.response.message;
-        state.errors = this.response.errors ? this.response.errors : {};
-
-        // change the component state
-        self.setState(state);
+        console.log(this.response.error);
       }
     };
     xhr.send();
   }
 
 render() {
-
-
     return(
-      <div>
-        <form onSubmit={this.processForm.bind(this)}>
-          {this.state.poll.options.map(option => <input type="radio" name={option} value={option} />)}
-          <button type="submit">Submit</button>
-        </form>
+        <div>
+        {this.state.showResults ? (
+        <form action="/" onSubmit={this.processForm.bind(this)} >
+          <h2 className="card-heading">{this.state.poll.title}</h2>
+  <RadioButtonGroup name="shipSpeed" defaultSelected="not_light" ref="radioGroup">
+    {this.state.poll.options.map(option =>
+    <RadioButton key={option} label={option} ref={option} value={option} />)}
+  </RadioButtonGroup>
+  <p><RaisedButton type="submit" label="Submit"/></p>
+        </form>)
+      : <CardText>You have selected: {this.state.option}</CardText>}
       </div>
-    )
-}
+    )}
 
 processForm(e) {
   e.preventDefault();
+  let option = this.refs.radioGroup.state.selected
+  console.log(this.refs.radioGroup.state.selected);
+  // for (var ref in this.refs) {
+  //   console.log(ref);
+  // }
+  let vote = 'option=' + option +
+              '&title=' + this.state.poll.title;
+  // create an AJAX request
+  console.log("Submmiting the following vote: %s", option);
+  let xhr = new XMLHttpRequest();
+  xhr.open('post', '/polls/newvote');
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.responseType = 'json';
+  xhr.send(vote);
+  console.log("submitted!");
+  this.setState({ option: option });
+  this.setState({ showResults: false });
 }
 }

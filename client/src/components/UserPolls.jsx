@@ -1,8 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
+import {RaisedButton} from 'material-ui';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
-import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Auth from '../modules/Auth';
 
 const myPolls = [];
@@ -16,9 +15,7 @@ export default class UserPolls extends React.Component {
     }
   }
 
-  getChildContext() {
-    return { muiTheme: getMuiTheme(baseTheme) };
-  }
+
 
   componentDidMount() {
     let xhr = new XMLHttpRequest();
@@ -50,6 +47,7 @@ export default class UserPolls extends React.Component {
       <TableHeader>
         <TableRow>
           <TableHeaderColumn>My Polls</TableHeaderColumn>
+          <TableHeaderColumn>Options</TableHeaderColumn>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -57,22 +55,22 @@ export default class UserPolls extends React.Component {
           this.state.myPolls.map(poll =>
         <TableRow key={poll.title}>
           <TableRowColumn>
-            <Link to={poll.title}>
+            <Link to={"/polls/" + poll.title}>
               {poll.title}
             </Link>
+          </TableRowColumn>
+          <TableRowColumn>
+            <RaisedButton secondary={true} onClick={this.delete.bind(this)} label="Delete"></RaisedButton>
           </TableRowColumn>
         </TableRow>)
       }
       </TableBody>
     </Table>
+  </div>
+)}
 
-          </div>
-
-    )
+  delete(e) {
+    e.preventDefault();
   }
 
 }
-
-UserPolls.childContextTypes = {
-  muiTheme: React.PropTypes.object.isRequired,
-};

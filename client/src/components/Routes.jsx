@@ -23,9 +23,16 @@ export default class Routes extends React.Component {
         <Route component={Home}>
           <Route path="/" component={PollList} />
           <Route path="/polls/mypolls" component={UserPolls} />
+          <Route path="/polls/new" component={NewPoll} />
+          <Route path="/polls/:formname" component={Poll} />
         </Route>
-        <Route path="/polls/new" component={NewPoll} />
+        <Route path="/login" component={LoginForm} />
+        <Route path="/signup" component={SignUpForm} />
         </Route>
+        <Route path="/logout" onEnter= {(nextState, replaceState) => {
+          Auth.deauthenticateUser();
+          replaceState(null, '/');
+        }} />
       </Router>
     )
 

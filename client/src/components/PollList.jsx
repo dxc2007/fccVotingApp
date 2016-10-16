@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 
 const polls = [{
-  title: "What's your favourite song?",
+  title: "Hang on man",
   creator: "someguy",
   options: [
     "yesterday once more",
@@ -17,7 +17,7 @@ const polls = [{
   }
 },
 {
-  title: "Color?",
+  title: "It's coming very soon",
   creator: "dxc2007",
   options: [
     "Blue",
@@ -41,6 +41,23 @@ constructor(props) {
     polls
   }
 }
+
+componentDidMount() {
+  let xhr = new XMLHttpRequest();
+  let self = this;
+  xhr.open('get', '/polls/showall',);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.responseType = 'json';
+  xhr.onload = function() {
+    if (this.status == 200) {
+      self.setState({polls: this.response.data});
+    } else {
+      console.log(this.response.error);
+    }
+  };
+  xhr.send();
+}
+
 render() {
   return (
     <div>
