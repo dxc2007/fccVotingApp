@@ -6,7 +6,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 import {Link} from 'react-router';
 
 const style = {
-  margin: 12,
+  textAlign: "center",
+  margin: 12
 };
 
 class Home extends React.Component {
@@ -20,16 +21,11 @@ class Home extends React.Component {
 
   render() {
     return (
-      <Card className="container">
-        <CardTitle title="Polling App" subtitle="by Xiaochen Du" />
-          <Link to="/polls/new">
-            <RaisedButton label="Create" primary={true} style={style} />
-          </Link>
-          <Link to="/polls/mypolls">
-            <RaisedButton label="My Polls" secondary={true} style={style} />
-          </Link>
+      <div>
+      <Card style={style}>
             {this.props.children}
       </Card>
+      </div>
     );
   }
 

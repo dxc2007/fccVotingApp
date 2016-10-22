@@ -1,6 +1,9 @@
 import React from 'react';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
-import {RaisedButton, CardText} from 'material-ui';
+import {RaisedButton, FlatButton, CardTitle, Subheader} from 'material-ui';
+import {Link} from 'react-router';
+import ChartView from './ChartView.jsx';
+import AddOption from './AddOption.jsx';
 
 const poll = {
   title: "What's your favourite song?",
@@ -17,6 +20,17 @@ const poll = {
   }
 }
 
+const pollOptionsStyle = {
+  width: "40%",
+  display: "block",
+  margin: "0 auto"
+}
+
+const buttonStyle = {
+  textAlign: "center",
+  margin: 12
+};
+
 export default class Poll extends React.Component {
 
   constructor(props) {
@@ -25,18 +39,21 @@ export default class Poll extends React.Component {
     this.state = {
       poll,
       showResults: true,
-      option: ""
+      option: "",
+      href: "https://www.facebook.com/sharer/sharer.php?u=" + window.location.href,
+      deleted: false,
+      data: []
     }
   }
 
-  componentDidMount() {
-    // console.log(this.state.poll);
+  componentWillMount() {
     let xhr = new XMLHttpRequest();
     // console.log(this.props);
-    let pollName = this.props.params.formname;
+    let pollId = this.props.params.formid;
     let self = this;
-    // console.log(pollName);
-    xhr.open('get', '/polls/details/'+pollName,);
+    // console.log(this.props);
+    // console.log(pollId);
+    xhr.open('get', '/polls/details/'+pollId,);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     // set the authorization HTTP header
     xhr.responseType = 'json';
@@ -58,22 +75,36 @@ export default class Poll extends React.Component {
 
 render() {
     return(
-        <div>
+        <div style={pollOptionsStyle}>
+          <CardTitle title={this.state.poll.title} />
+          { this.state.deleted ? (<p>Poll has been deleted</p>) : null}
+          <RaisedButton style={buttonStyle} primary={true} label="Delete" onClick={this.delete.bind(this)}/>
+            <a href={this.state.href} target="_blank"><RaisedButton style={buttonStyle} icon={<i className='fa fa-facebook-square fa-2x' />} label="FB this">
+              </RaisedButton></a>
         {this.state.showResults ? (
         <form action="/" onSubmit={this.processForm.bind(this)} >
-          <h2 className="card-heading">{this.state.poll.title}</h2>
+
   <RadioButtonGroup name="shipSpeed" defaultSelected="not_light" ref="radioGroup">
     {this.state.poll.options.map(option =>
     <RadioButton key={option} label={option} ref={option} value={option} />)}
   </RadioButtonGroup>
-  <p><RaisedButton type="submit" label="Submit"/></p>
+      <AddOption poll={this.state.poll} renderPoll={this.renderPoll.bind(this)}/>
+  <p><RaisedButton type="submit" label="Submit"/>
+  </p>
         </form>)
-      : <CardText>You have selected: {this.state.option}</CardText>}
+      : <ChartView
+      option={this.state.option}
+      poll={this.state.poll}
+      data={this.state.data}
+      />}
       </div>
+
     )}
 
 processForm(e) {
   e.preventDefault();
+  let currentPoll = Object.assign({}, this.state.poll);
+  console.log(currentPoll);
   let option = this.refs.radioGroup.state.selected
   console.log(this.refs.radioGroup.state.selected);
   // for (var ref in this.refs) {
@@ -90,6 +121,30 @@ processForm(e) {
   xhr.send(vote);
   console.log("submitted!");
   this.setState({ option: option });
+  if (currentPoll.votes[option] === undefined) {
+    currentPoll.votes[option] = 1;
+  } else {
+    currentPoll.votes[option] += 1;
+  }
+  console.log(currentPoll);
+  this.setState({ poll: currentPoll });
   this.setState({ showResults: false });
 }
+
+delete(e) {
+  e.preventDefault();
+  console.log(this.state.poll);
+  const pollTitle = 'title=' + this.state.poll.title;
+  let xhr = new XMLHttpRequest();
+  xhr.open('post', '/polls/delete');
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.responseType = 'json';
+  xhr.send(pollTitle);
+  this.setState({ deleted: true });
+  replaceState(null, '/polls/mypolls');
+}
+
+  renderPoll(data) {
+    this.setState({ poll: data });
+  }
 }

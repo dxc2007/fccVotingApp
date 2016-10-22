@@ -1,10 +1,21 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {RaisedButton} from 'material-ui';
+import {List, ListItem} from 'material-ui/List';
+import {RaisedButton, CardTitle, Divider, Subheader} from 'material-ui';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import Auth from '../modules/Auth';
 
 const myPolls = [];
+
+const buttonStyle = {
+  textAlign: "center",
+  margin: 12
+};
+
+const listStyle = {
+  fontWeight: "normal"
+
+}
 
 export default class UserPolls extends React.Component {
   constructor(props) {
@@ -14,8 +25,6 @@ export default class UserPolls extends React.Component {
       myPolls
     }
   }
-
-
 
   componentDidMount() {
     let xhr = new XMLHttpRequest();
@@ -43,34 +52,24 @@ export default class UserPolls extends React.Component {
   render() {
     return (
       <div>
-        <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHeaderColumn>My Polls</TableHeaderColumn>
-          <TableHeaderColumn>Options</TableHeaderColumn>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {
-          this.state.myPolls.map(poll =>
-        <TableRow key={poll.title}>
-          <TableRowColumn>
-            <Link to={"/polls/" + poll.title}>
-              {poll.title}
-            </Link>
-          </TableRowColumn>
-          <TableRowColumn>
-            <RaisedButton secondary={true} onClick={this.delete.bind(this)} label="Delete"></RaisedButton>
-          </TableRowColumn>
-        </TableRow>)
-      }
-      </TableBody>
-    </Table>
+        <CardTitle title={Auth.getUserInfo()} />
+        <Link to="/polls/new">
+          <RaisedButton label="Create" primary={true} style={buttonStyle}/>
+        </Link>
+        <Link to="/polls/mypolls">
+          <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
+        </Link>
+  <List style={listStyle}>
+    <Subheader>Your polls</Subheader>
+    {
+      this.state.myPolls.map(poll =>
+        <Link to={"/polls/" + poll._id}>
+          <Divider />
+          <ListItem key={poll.title} primaryText={poll.title} />
+        </Link>
+      )
+  }
+  </List>
   </div>
 )}
-
-  delete(e) {
-    e.preventDefault();
-  }
-
 }

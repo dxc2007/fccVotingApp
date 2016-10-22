@@ -24,7 +24,7 @@ export default class Routes extends React.Component {
           <Route path="/" component={PollList} />
           <Route path="/polls/mypolls" component={UserPolls} />
           <Route path="/polls/new" component={NewPoll} />
-          <Route path="/polls/:formname" component={Poll} />
+          <Route path="/polls/:formid" component={Poll} />
         </Route>
         <Route path="/login" component={LoginForm} />
         <Route path="/signup" component={SignUpForm} />

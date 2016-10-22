@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {List, ListItem} from 'material-ui/List';
+import {RaisedButton, CardTitle, Divider, Subheader} from 'material-ui';
 
 const polls = [{
   title: "Hang on man",
@@ -32,6 +33,16 @@ const polls = [{
 }
 ]
 
+const buttonStyle = {
+  textAlign: "center",
+  margin: 12
+};
+
+const listStyle = {
+  fontWeight: "normal"
+
+}
+
 export default class PollList extends React.Component {
 
 constructor(props) {
@@ -61,25 +72,24 @@ componentDidMount() {
 render() {
   return (
     <div>
-      <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHeaderColumn>All Polls</TableHeaderColumn>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {
-        this.state.polls.map(poll =>
-      <TableRow key={poll.title}>
-        <TableRowColumn>
-          <Link to={poll.title}>
-            {poll.title}
-          </Link>
-        </TableRowColumn>
-      </TableRow>)
-    }
-    </TableBody>
-  </Table>
+      <CardTitle title="All Polls" />
+        <Link to="/polls/new">
+          <RaisedButton label="Create" primary={true} style={buttonStyle}/>
+        </Link>
+        <Link to="/polls/mypolls">
+          <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
+        </Link>
+        <List style={listStyle}>
+          <Subheader>All polls</Subheader>
+          {
+            this.state.polls.map(poll =>
+              <Link to={"/polls/" + poll._id}>
+                <Divider />
+                <ListItem key={poll.title} primaryText={poll.title} />
+              </Link>
+            )
+        }
+        </List>
 </div>
 )
 }

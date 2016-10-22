@@ -27,7 +27,7 @@ router.post('/newvote', function(req, res) {
   const option = req.body.option;
   const title = req.body.title;
   const inc = {};
-  inc["votes." + option] = 1;
+  inc["votes." + option.toString()] = 1;
   console.log(option, title);
   let update = Poll.update({ title: title}, {$inc: inc},
     function(err, object) {
@@ -39,8 +39,36 @@ router.post('/newvote', function(req, res) {
   })
 })
 
+router.post('/addoption', function(req, res) {
+  const option = req.body.option;
+  const title = req.body.title;
+  console.log(option);
+  console.log(option, title);
+  let update = Poll.update({ title: title}, {$push: { options: option}},
+    function(err, object) {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(object);
+    }
+  })
+})
+
+
+router.post('/delete', function(req, res) {
+  const title = req.body.title;
+  console.log(title);
+  Poll.find({ title: title}).remove(function(err, object) {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log(object);
+  }
+})
+})
+
 router.get('/showall', function(req, res) {
-  var query = Poll.find({}).sort({ title: 1})
+  var query = Poll.find({}).sort({ title: 1});
 
   query.exec(function(err, polls) {
     if (err) {
@@ -56,7 +84,7 @@ router.get('/showall', function(req, res) {
 router.get('/user/:username', function(req, res) {
   const user = decodeURI(req.params.username);
   console.log(user);
-  var query = Poll.find({ creator: user }).sort({ title: 1})
+  var query = Poll.find({ creator: user }).sort({ title: 1});
 
   query.exec(function(err, polls) {
     if (err) {
@@ -69,12 +97,10 @@ router.get('/user/:username', function(req, res) {
 })
 })
 
-router.get('/details/:formname', function(req, res) {
-  const form = decodeURI(req.params.formname);
-  console.log(form);
-  var query = Poll.findOne({ title: form})
-
-  query.exec(function(err, form) {
+router.get('/details/:formid', function(req, res) {
+  const id = req.params.formid;
+  console.log(id);
+  Poll.findOne({_id: id}, function(err, form) {
     if (err) {
       console.log(err)
       return res.json({error: err});
