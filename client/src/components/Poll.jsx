@@ -79,7 +79,7 @@ export default class Poll extends React.Component {
     return(
       <div style={pollOptionsStyle}>
         <CardTitle title={this.state.poll.title} />
-        {this.state.deleted ? (<p>Poll has been deleted</p>) : null}
+        // {this.state.deleted ? (<p>Poll has been deleted</p>) : null}
         <div>
           <RaisedButton style={buttonStyle} primary={true} label="Delete" onClick={this.delete.bind(this)}/>
           <a href={this.state.href} target="_blank"><RaisedButton style={buttonStyle} icon={<i className='fa fa-facebook-square fa-2x' />} label="FB this">

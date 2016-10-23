@@ -66528,7 +66528,10 @@
 
 	var style = {
 	  textAlign: "center",
-	  margin: 12
+	  maxWidth: "700px",
+	  display: "block",
+	  margin: "0 auto",
+	  marginTop: "1em"
 	};
 
 	var Home = function (_React$Component) {
@@ -66689,6 +66692,7 @@
 	        'div',
 	        { style: pollOptionsStyle },
 	        _react2.default.createElement(_materialUi.CardTitle, { title: this.state.poll.title }),
+	        '// ',
 	        this.state.deleted ? _react2.default.createElement(
 	          'p',
 	          null,
@@ -92310,11 +92314,6 @@
 	  margin: 12
 	};
 
-	var listStyle = {
-	  fontWeight: "normal"
-
-	};
-
 	var UserPolls = function (_React$Component) {
 	  _inherits(UserPolls, _React$Component);
 
@@ -92324,7 +92323,8 @@
 	    var _this = _possibleConstructorReturn(this, (UserPolls.__proto__ || Object.getPrototypeOf(UserPolls)).call(this, props));
 
 	    _this.state = {
-	      myPolls: myPolls
+	      myPolls: myPolls,
+	      userHasPolls: true
 	    };
 	    return _this;
 	  }
@@ -92342,20 +92342,30 @@
 	      xhr.responseType = 'json';
 	      xhr.onload = function () {
 	        if (this.status == 200) {
-	          // change the component state
 	          self.setState({ myPolls: this.response.data });
-	          // change the current URL to /
-	          // history.replaceState(null, '/login');
 	        } else {
-	          // failure
 	          console.log(this.response.error);
 	        }
 	      };
 	      xhr.send();
 	    }
+
+	    // componentDidUpdate(prevProps, prevState) {
+	    //   const newPolls = this.state.myPolls;
+	    //   // console.log("b4", originalPoll.length);
+	    //   // console.log("after", newPolls.length);
+	    //   // console.log(originalPoll.length == newPolls.length);
+	    //   console.log(newPolls.length == 0);
+	    //   if (newPolls.length == 0) {
+	    //     this.setState({userHasPolls: false})
+	    //   }
+	    // }
+
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var _this2 = this;
+
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -92372,7 +92382,7 @@
 	        ),
 	        _react2.default.createElement(
 	          _List.List,
-	          { style: listStyle },
+	          { className: 'list' },
 	          _react2.default.createElement(
 	            _materialUi.Subheader,
 	            null,
@@ -92383,11 +92393,42 @@
 	              _reactRouter.Link,
 	              { to: "/polls/" + poll._id },
 	              _react2.default.createElement(_materialUi.Divider, null),
-	              _react2.default.createElement(_List.ListItem, { key: poll.title, primaryText: poll.title })
+	              _react2.default.createElement(_List.ListItem, { primaryText: poll.title,
+	                rightIconButton: _react2.default.createElement(_materialUi.RaisedButton, { style: buttonStyle, label: 'Delete', onClick: _this2.delete.bind(_this2, poll.title) }) })
 	            );
 	          })
 	        )
 	      );
+	    }
+	  }, {
+	    key: 'delete',
+	    value: function _delete(title, e) {
+	      e.preventDefault();
+	      // console.log(title);
+	      var pollTitle = 'title=' + title;
+	      // console.log(pollTitle);
+	      var xhr = new XMLHttpRequest();
+	      xhr.open('post', '/polls/delete');
+	      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	      xhr.responseType = 'json';
+	      xhr.send(pollTitle);
+	      var polls = this.state.myPolls.slice();
+	      // console.log(polls);
+	      function filterPoll(val) {
+	        // console.log("Poll details are", val);
+	        // console.log("Title is", pollTitle);
+	        if (val.title !== title) {
+	          return true;
+	        } else {
+	          return false;
+	        }
+	      }
+	      var newPolls = polls.filter(filterPoll);
+	      // console.log(newPolls);
+	      this.setState({
+	        myPolls: newPolls
+	      });
+	      // console.log(this.state.myPolls);
 	    }
 	  }]);
 
@@ -92413,6 +92454,8 @@
 	var _react2 = _interopRequireDefault(_react);
 
 	var _materialUi = __webpack_require__(237);
+
+	var _reactRouter = __webpack_require__(172);
 
 	var _jquery = __webpack_require__(757);
 
@@ -92483,9 +92526,18 @@
 	            _react2.default.createElement(_materialUi.RaisedButton, { type: 'submit', label: 'Submit', primary: true })
 	          )
 	        ) : _react2.default.createElement(
-	          _materialUi.CardText,
+	          'div',
 	          null,
-	          this.state.feedback
+	          _react2.default.createElement(
+	            _materialUi.CardText,
+	            null,
+	            this.state.feedback
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/polls/mypolls' },
+	            _react2.default.createElement(_materialUi.RaisedButton, { label: 'Head to My Polls', secondary: true })
+	          )
 	        )
 	      );
 	    }
@@ -103521,7 +103573,7 @@
 	        ),
 	        _react2.default.createElement(
 	          _List.List,
-	          { style: listStyle },
+	          { className: 'list' },
 	          _react2.default.createElement(
 	            _materialUi.Subheader,
 	            null,

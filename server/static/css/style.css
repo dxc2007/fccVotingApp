@@ -49,6 +49,13 @@ a:hover {
   width: 80%;
 }
 
+.list {
+  font-weight: normal;
+  max-width: 600px;
+  display: block;
+  margin: 0 auto
+}
+
 .card-heading {
   padding: 16px;
 }

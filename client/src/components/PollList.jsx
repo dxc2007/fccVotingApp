@@ -79,7 +79,7 @@ render() {
         <Link to="/polls/mypolls">
           <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
         </Link>
-        <List style={listStyle}>
+        <List className="list">
           <Subheader>All polls</Subheader>
           {
             this.state.polls.map(poll =>

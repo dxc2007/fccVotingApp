@@ -1,5 +1,6 @@
 import React from 'react';
 import {RaisedButton, TextField, CardText} from 'material-ui';
+import {Link} from 'react-router';
 import $ from "jquery";
 
 import Auth from '../modules/Auth';
@@ -40,7 +41,14 @@ render() {
                 <RaisedButton onClick={this.appendInput.bind(this)} label="Add Option" />
                 <RaisedButton type="submit" label="Submit" primary={true} />
               </div>
-          </form>) : <CardText>{this.state.feedback}</CardText>
+          </form>) :
+
+          <div>
+            <CardText>{this.state.feedback}</CardText>
+              <Link to="/polls/mypolls">
+                <RaisedButton label="Head to My Polls" secondary={true} />
+              </Link>
+          </div>
         }
       </div>
     )}

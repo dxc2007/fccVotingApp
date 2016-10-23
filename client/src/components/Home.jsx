@@ -7,7 +7,10 @@ import {Link} from 'react-router';
 
 const style = {
   textAlign: "center",
-  margin: 12
+  maxWidth: "700px",
+  display: "block",
+  margin: "0 auto",
+  marginTop: "1em"
 };
 
 class Home extends React.Component {

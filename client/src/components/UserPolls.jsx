@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {List, ListItem} from 'material-ui/List';
-import {RaisedButton, CardTitle, Divider, Subheader} from 'material-ui';
+import {RaisedButton, FlatButton, CardTitle, Divider, Subheader} from 'material-ui';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import Auth from '../modules/Auth';
 
@@ -12,17 +12,13 @@ const buttonStyle = {
   margin: 12
 };
 
-const listStyle = {
-  fontWeight: "normal"
-
-}
-
 export default class UserPolls extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      myPolls
+      myPolls,
+      userHasPolls: true
     }
   }
 
@@ -37,17 +33,24 @@ export default class UserPolls extends React.Component {
     xhr.responseType = 'json';
     xhr.onload = function() {
       if (this.status == 200) {
-        // change the component state
         self.setState({myPolls: this.response.data});
-        // change the current URL to /
-        // history.replaceState(null, '/login');
       } else {
-        // failure
         console.log(this.response.error);
       }
     };
     xhr.send();
   }
+
+  // componentDidUpdate(prevProps, prevState) {
+  //   const newPolls = this.state.myPolls;
+  //   // console.log("b4", originalPoll.length);
+  //   // console.log("after", newPolls.length);
+  //   // console.log(originalPoll.length == newPolls.length);
+  //   console.log(newPolls.length == 0);
+  //   if (newPolls.length == 0) {
+  //     this.setState({userHasPolls: false})
+  //   }
+  // }
 
   render() {
     return (
@@ -59,17 +62,46 @@ export default class UserPolls extends React.Component {
         <Link to="/polls/mypolls">
           <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
         </Link>
-  <List style={listStyle}>
+  <List className="list">
     <Subheader>Your polls</Subheader>
-    {
-      this.state.myPolls.map(poll =>
-        <Link to={"/polls/" + poll._id}>
-          <Divider />
-          <ListItem key={poll.title} primaryText={poll.title} />
-        </Link>
-      )
-  }
+          {this.state.myPolls.map(poll => <Link to={"/polls/" + poll._id}>
+            <Divider />
+            <ListItem primaryText={poll.title}
+              rightIconButton={<RaisedButton style={buttonStyle} label="Delete" onClick={this.delete.bind(this, poll.title)}/>} />
+          </Link>
+        )
+      }
   </List>
   </div>
+
 )}
+
+delete(title, e) {
+  e.preventDefault();
+  // console.log(title);
+  const pollTitle = 'title=' + title;
+  // console.log(pollTitle);
+  let xhr = new XMLHttpRequest();
+  xhr.open('post', '/polls/delete');
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.responseType = 'json';
+  xhr.send(pollTitle);
+  let polls = this.state.myPolls.slice();
+  // console.log(polls);
+  function filterPoll(val) {
+    // console.log("Poll details are", val);
+    // console.log("Title is", pollTitle);
+    if(val.title !== title) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  let newPolls = polls.filter(filterPoll);
+  // console.log(newPolls);
+  this.setState({
+    myPolls: newPolls
+  });
+  // console.log(this.state.myPolls);
+}
 }
