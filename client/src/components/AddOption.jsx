@@ -1,5 +1,6 @@
 import React from 'react';
-import {RaisedButton, FlatButton, TextField, CardText} from 'material-ui';
+import {RaisedButton, FlatButton, TextField, CardText, FloatingActionButton} from 'material-ui';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 import {Chart} from 'chart.js';
 
 export default class AddOption extends React.Component {
@@ -20,7 +21,9 @@ export default class AddOption extends React.Component {
         <TextField ref="addOption" floatingLabelText="Option" />
         <RaisedButton label="Confirm" primary={true} onClick={this.processForm.bind(this)}/>
         </div>
-          ) : (<RaisedButton label="Add Option" onClick={this.toggleAdd.bind(this)}/>)
+      ) : (<FloatingActionButton secondary={true} onClick={this.toggleAdd.bind(this)}>
+                <ContentAdd />
+              </FloatingActionButton>)
         }
     </div>
     )

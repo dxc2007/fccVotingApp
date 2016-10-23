@@ -1,9 +1,15 @@
 import React from 'react';
 import {Link, IndexLink} from 'react-router';
-import AppBar from 'material-ui/AppBar';
+import {AppBar, IconButton, IconMenu, FlatButton } from 'material-ui';
 import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MenuBar from './MenuBar.jsx'
+import Attachment from 'material-ui/svg-icons/file/attachment';
 import Auth from '../modules/Auth';
+
+const appbarStyle = {
+  color: "black"
+}
 
 class Base extends React.Component {
   /**
@@ -18,24 +24,10 @@ class Base extends React.Component {
     return (
       <div>
         <div>
-          <AppBar title="Polling App" iconClassNameRight="muidocs-icon-navigation-expand-more">
-                    <IndexLink to="/">React App</IndexLink>
-                     <Link to="/polls/randomName">Polls</Link>
-                     <Link to="/polls/new">NewPoll</Link>
-                     <Link to="/polls/mypolls">UserPolls</Link>
-
-                   {Auth.isUserAuthenticated() ? (
-                       <div><Link to="/logout">Log out</Link></div>
-                   ) : (
-                     <div><Link to="/login">Log in</Link>
-                     <Link to="/signup">Sign up</Link></div>
-                   )}
-
-               </AppBar>
+          <AppBar title="Polling App" style={appbarStyle} iconElementLeft={<IconButton><Attachment/></IconButton>} iconElementRight={<MenuBar />} />
         </div>
-
         {this.props.children}
-      </div>
+        </div>
     );
   }
 }
