@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 import {Card, CardTitle, CardText, RaisedButton, TextField} from 'material-ui';
-import baseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 

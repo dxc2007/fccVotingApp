@@ -1,6 +1,7 @@
 import React from 'react';
 import {RaisedButton, FlatButton, CardText} from 'material-ui';
 import {Chart} from 'chart.js';
+import {Link} from "react-router";
 
 export default class ChartView extends React.Component {
 
@@ -16,6 +17,7 @@ export default class ChartView extends React.Component {
   render() {
     return(
       <div><CardText>You chose: {this.props.option}</CardText>
+      <Link to="/"><RaisedButton secondary={true} label="Back to Polls" /></Link>
       { this.state.viewChart ? <canvas id="myChart" width="400" height="400"></canvas>
         : <RaisedButton primary={true} label="View Results" onClick={this.sortData.bind(this)}/>
       }

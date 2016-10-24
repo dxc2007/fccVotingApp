@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router';
 import {List, ListItem} from 'material-ui/List';
 import {RaisedButton, CardTitle, Divider, Subheader} from 'material-ui';
+import Auth from '../modules/Auth';
 
 const polls = [{
   title: "Hang on man",
@@ -73,12 +74,23 @@ render() {
   return (
     <div>
       <CardTitle title="All Polls" />
-        <Link to="/polls/new">
-          <RaisedButton label="Create" primary={true} style={buttonStyle}/>
+      {Auth.isUserAuthenticated()?
+        (
+          <div>
+            <Link to="/polls/new">
+            <RaisedButton label="Create" primary={true} style={buttonStyle}/>
+          </Link>
+          <Link to="/polls/mypolls">
+            <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
+          </Link>
+          </div>
+      )
+        :
+        <p><Link to="/login">
+          <RaisedButton label="Login" secondary={true} style={buttonStyle} />
         </Link>
-        <Link to="/polls/mypolls">
-          <RaisedButton label="My Polls" secondary={true} style={buttonStyle} />
-        </Link>
+        to access your polls</p>
+      }
         <List className="list">
           <Subheader>All polls</Subheader>
           {
