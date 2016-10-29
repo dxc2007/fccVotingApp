@@ -1,11 +1,11 @@
 {
-  "name": "react-auth",
+  "name": "voting-app-dxc2007",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --use-strict index.js"
+    "start": "node --use-strict index.js"
   },
   "author": "Xiaochen Du <duxiaochen1996@outlook.com> (http://dxc2007.github.io/)",
   "license": "ISC",
