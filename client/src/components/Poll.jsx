@@ -114,7 +114,7 @@ processForm(e) {
   e.preventDefault();
   let currentPoll = Object.assign({}, this.state.poll);
   console.log(currentPoll);
-  let option = this.refs.radioGroup.state.selected
+  let option = this.refs.radioGroup.state.selected;
   if (option === "") {
     this.setState({ formErrorText: "Please select an option!"});
     return "was hoping for that";
@@ -126,7 +126,7 @@ processForm(e) {
   let vote = 'option=' + option +
               '&title=' + this.state.poll.title;
   // create an AJAX request
-  console.log("Submmiting the following vote: %s", option);
+  console.log("Submiting the following vote: %s", option);
   let xhr = new XMLHttpRequest();
   xhr.open('post', '/polls/newvote');
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -134,6 +134,9 @@ processForm(e) {
   xhr.send(vote);
   console.log("submitted!");
   this.setState({ option: option });
+  if (!currentPoll.votes) {
+    currentPoll.votes = {}
+  }
   if (currentPoll.votes[option] === undefined) {
     currentPoll.votes[option] = 1;
   } else {

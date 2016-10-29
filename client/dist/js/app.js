@@ -27223,10 +27223,6 @@
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
-	var _createBrowserHistory = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"history/createBrowserHistory\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-
-	var _createBrowserHistory2 = _interopRequireDefault(_createBrowserHistory);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27240,7 +27236,6 @@
 	//Check this repo:
 	//https://github.com/zilverline/react-tap-event-plugin
 	(0, _reactTapEventPlugin2.default)();
-	var history = (0, _createBrowserHistory2.default)();
 
 	var appbarStyle = {
 	  color: "black"
@@ -67131,7 +67126,7 @@
 	      // }
 	      var vote = 'option=' + option + '&title=' + this.state.poll.title;
 	      // create an AJAX request
-	      console.log("Submmiting the following vote: %s", option);
+	      console.log("Submiting the following vote: %s", option);
 	      var xhr = new XMLHttpRequest();
 	      xhr.open('post', '/polls/newvote');
 	      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -67139,6 +67134,9 @@
 	      xhr.send(vote);
 	      console.log("submitted!");
 	      this.setState({ option: option });
+	      if (!currentPoll.votes) {
+	        currentPoll.votes = {};
+	      }
 	      if (currentPoll.votes[option] === undefined) {
 	        currentPoll.votes[option] = 1;
 	      } else {
@@ -92854,12 +92852,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var pollTemplate = {
-	  title: "String",
-	  creator: _Auth2.default.getUserInfo(),
-	  options: []
-	};
-
 	var NewPoll = function (_React$Component) {
 	  _inherits(NewPoll, _React$Component);
 
@@ -92870,9 +92862,11 @@
 
 	    _this.state = {
 	      inputs: ['input-0', "input-1"],
-	      formOptions: [],
 	      showOptions: true,
-	      feedback: ""
+	      feedback: "",
+	      title: "String",
+	      creator: _Auth2.default.getUserInfo(),
+	      options: []
 	    };
 	    return _this;
 	  }
@@ -92881,6 +92875,7 @@
 	    key: 'render',
 	    value: function render() {
 	      console.log("User Info: %s", _Auth2.default.getUserInfo());
+
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -92931,45 +92926,27 @@
 	      //      console.log("Form options: %s", this.state.formOptions[ref]);
 	      //      optionArr.push(this.state.formOptions[ref]);
 	      // }
-	      // let optionArr = [];
+	      var optionsArr = [];
 	      for (var ref in this.refs) {
 	        console.log(this.refs);
 	        console.log("Ref: %s", this.refs[ref]);
 	        var formValues = this.refs[ref].getValue();
-	        var currentValues = this.state.formOptions;
-	        console.log(currentValues);
-	        console.log(this.state.formOptions);
-	        this.setState({ currentValues: this.state.formOptions.push(formValues) });
-	        console.log(this.state.formOptions.slice(1));
+	        optionsArr.push(formValues);
+	        console.log(optionsArr.slice(1));
 	      };
-	      pollTemplate.title = this.refs.title.getValue();
-	      // this.state.inputs.map(field => this.state.formOptions.append(this.refs.field.getValue()));
-	      //yes it works!!!
-	      pollTemplate.options = this.state.formOptions.slice(1);
-	      for (var option in pollTemplate.options) {
-	        console.log("Form Temp options: ", pollTemplate.options[option]);
+	      this.setState({ options: optionsArr.slice(1) }, this.setState({ title: this.refs.title.getValue() }, this.sendPoll.bind(this)));
+	    }
+	  }, {
+	    key: 'sendPoll',
+	    value: function sendPoll() {
+	      for (var option in this.state.options) {
+	        console.log("Form Temp options: ", this.state.options[option]);
 	      }
-	      // const newPoll = new Poll(pollTemplate);
-	      // create a string for an HTTP body message
-	      console.log("title: %s", pollTemplate.title);
-	      console.log("creator: %s", pollTemplate.creator);
-	      // console.log("poll: " + this.state.inputs);
-	      console.log("options: %s", pollTemplate.options);
-	      var poll = 'title=' + pollTemplate.title + '&creator=' + pollTemplate.creator + '&options=' + pollTemplate.options;
-
-	      // create an AJAX request
-	      // let poll = pollTemplate;
-	      console.log("Submmiting the following new poll: %j", pollTemplate);
-	      // $.ajax({
-	      //   type: "POST",
-	      //   url: "/polls/newpoll",
-	      //   data: pollTemplate,
-	      // }).done(function(data) {
-	      //   console.log(data);
-	      //   //light up sucess. hide button etc.
-	      // }).fail(function(error) {
-	      //   console.log(error);
-	      // });
+	      console.log("title: %s", this.state.title);
+	      console.log("creator: %s", this.state.creator);
+	      console.log("options: %s", this.state.options);
+	      var poll = 'title=' + this.state.title + '&creator=' + this.state.creator + '&options=' + this.state.options;
+	      console.log("Submitting the following new poll: %j", this.state);
 	      var xhr = new XMLHttpRequest();
 	      xhr.open('post', '/polls/newpoll');
 	      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

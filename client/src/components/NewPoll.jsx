@@ -5,12 +5,6 @@ import $ from "jquery";
 
 import Auth from '../modules/Auth';
 
-let pollTemplate = {
-  title: "String",
-  creator: Auth.getUserInfo(),
-  options: [],
-}
-
 export default class NewPoll extends React.Component {
 
 constructor(props) {
@@ -18,14 +12,17 @@ constructor(props) {
 
   this.state = {
     inputs: ['input-0', "input-1"],
-    formOptions: [],
     showOptions: true,
-    feedback: ""
+    feedback: "",
+    title: "String",
+    creator: Auth.getUserInfo(),
+    options: [],
   }
 }
 
 render() {
   console.log("User Info: %s", Auth.getUserInfo());
+
     return(
       <div>
         { this.state.showOptions ?
@@ -60,54 +57,37 @@ processForm(event) {
   //      console.log("Form options: %s", this.state.formOptions[ref]);
   //      optionArr.push(this.state.formOptions[ref]);
   // }
-  // let optionArr = [];
+  let optionsArr = [];
   for (var ref in this.refs) {
     console.log(this.refs);
     console.log("Ref: %s", this.refs[ref]);
     let formValues = this.refs[ref].getValue();
-    let currentValues = this.state.formOptions;
-    console.log(currentValues);
-    console.log(this.state.formOptions);
-    this.setState({currentValues: this.state.formOptions.push(formValues)});
-    console.log(this.state.formOptions.slice(1));
+    optionsArr.push(formValues);
+    console.log(optionsArr.slice(1));
   };
-  pollTemplate.title = this.refs.title.getValue();
-  // this.state.inputs.map(field => this.state.formOptions.append(this.refs.field.getValue()));
-  //yes it works!!!
-  pollTemplate.options = this.state.formOptions.slice(1);
-  for (var option in pollTemplate.options) {
-    console.log("Form Temp options: ", pollTemplate.options[option]);
+  this.setState({ options: optionsArr.slice(1)},
+      this.setState({ title: this.refs.title.getValue() },
+      this.sendPoll.bind(this)));
   }
-  // const newPoll = new Poll(pollTemplate);
-  // create a string for an HTTP body message
-  console.log("title: %s", pollTemplate.title);
-  console.log("creator: %s", pollTemplate.creator);
-  // console.log("poll: " + this.state.inputs);
-  console.log("options: %s",  pollTemplate.options);
-  let poll = 'title=' + pollTemplate.title
-           + '&creator=' + pollTemplate.creator
-           + '&options=' + pollTemplate.options;
 
-  // create an AJAX request
-    // let poll = pollTemplate;
-  console.log("Submmiting the following new poll: %j", pollTemplate);
-  // $.ajax({
-  //   type: "POST",
-  //   url: "/polls/newpoll",
-  //   data: pollTemplate,
-  // }).done(function(data) {
-  //   console.log(data);
-  //   //light up sucess. hide button etc.
-  // }).fail(function(error) {
-  //   console.log(error);
-  // });
-  let xhr = new XMLHttpRequest();
-  xhr.open('post', '/polls/newpoll');
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.responseType = 'json';
-  xhr.send(poll);
-  this.setState({ feedback : "Oh yeah it's done!" });
-  this.setState({ showOptions : false });
+  sendPoll() {
+    for (var option in this.state.options) {
+      console.log("Form Temp options: ", this.state.options[option]);
+    }
+    console.log("title: %s", this.state.title);
+    console.log("creator: %s", this.state.creator);
+    console.log("options: %s",  this.state.options);
+    let poll = 'title=' + this.state.title
+        + '&creator=' + this.state.creator
+        + '&options=' + this.state.options;
+    console.log("Submitting the following new poll: %j", this.state);
+    let xhr = new XMLHttpRequest();
+    xhr.open('post', '/polls/newpoll');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.responseType = 'json';
+    xhr.send(poll);
+    this.setState({ feedback : "Oh yeah it's done!" });
+    this.setState({ showOptions : false });
   }
 
   appendInput() {
