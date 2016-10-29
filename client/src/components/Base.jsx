@@ -7,15 +7,12 @@ import MenuBar from './MenuBar.jsx'
 import Attachment from 'material-ui/svg-icons/file/attachment';
 import Auth from '../modules/Auth';
 import injectTapEventPlugin from "react-tap-event-plugin";
-import createHistory from 'history/createBrowserHistory';
-
 
  //Needed for onTouchTap
  //Can go away when react 1.0 release
  //Check this repo:
  //https://github.com/zilverline/react-tap-event-plugin
  injectTapEventPlugin();
- const history = createHistory();
 
 const appbarStyle = {
   color: "black"

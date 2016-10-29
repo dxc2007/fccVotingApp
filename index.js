@@ -4,6 +4,8 @@ const passport = require('passport');
 const config = require('./config');
 
 let app = express();
+let port = process.env.PORT || 8080;
+let mongoUri = process.env.MONGOLAB_URI;
 
 // tell the app to look for static files in these directories
 app.use(express.static('./server/static/'));
@@ -31,6 +33,6 @@ app.use('/api', apiRoutes);
 app.use('/polls', pollRoutes);
 
 // start the server
-app.listen(3000, function() {
-    console.log('Server is running on http://localhost:3000 or http://127.0.0.1:3000');
+app.listen(port, function() {
+    console.log('Pirates on deck', port);
 });
